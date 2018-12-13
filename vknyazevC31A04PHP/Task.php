@@ -7,7 +7,7 @@ class Task
     private $status;
     private $dateCreated;
     private $dateUpdated;
-
+    private $saved = false;
     function __construct(int $id)
     {
         if ($id < 0) {
@@ -25,17 +25,15 @@ class Task
                 $this->status = $task->status;
                 $this->dateCreated = $task->dateCreated;
                 $this->dateUpdated = $task->dateUpdated; 
+                $this->saved = true;
                }
-            }
-            if ($this->id == null) {
-                die("No such task");
             }
         }
     }
 
     public function getId()
     {
-        return $id;
+        return $this->id;
     }
     public function setId(int $id)
     {
@@ -66,7 +64,9 @@ class Task
     }
     public function setDescription(string $description)
     {
-        $this->dateUpdated = date_timestamp_get(date_create());
+        if ($description != $this->description)
+            $this->dateUpdated = date_timestamp_get(date_create());
+            
         $this->description = $description;
     }
     public function getTitle()
@@ -75,7 +75,8 @@ class Task
     }
     public function setTitle(string $title)
     {
-        $this->dateUpdated = date_timestamp_get(date_create());
+        if ($title != $this->title)
+            $this->dateUpdated = date_timestamp_get(date_create());
         $this->title = $title;
     }
     public function getStatus()
@@ -84,7 +85,8 @@ class Task
     }
     public function setStatus(int $status)
     {
-        $this->dateUpdated = date_timestamp_get(date_create());
+        if ($status != $this->status)
+            $this->dateUpdated = date_timestamp_get(date_create());
         $this->status = $status;
     }
 
@@ -102,8 +104,9 @@ class Task
         $tasks = array_filter(json_decode(file_get_contents("./List/Tasks.json"), false), function ($el) {
             return $el->id != $this->id;
         });
-        array_push($tasks, $this->getAll());
+        array_unshift($tasks, $this->getAll());
         file_put_contents("List/Tasks.json", json_encode(array_values($tasks)));
+        $this->saved = true;
     }
 }
 
