@@ -30,7 +30,6 @@ class Task
             if ($this->id == null) {
                 die("No such task");
             }
-            var_dump($this->getAll());
         }
     }
 
@@ -104,8 +103,7 @@ class Task
             return $el->id != $this->id;
         });
         array_push($tasks, $this->getAll());
-        var_dump($tasks);
-        file_put_contents("List/Tasks.json", array_values(json_encode($tasks)));
+        file_put_contents("List/Tasks.json", json_encode(array_values($tasks)));
     }
 }
 
